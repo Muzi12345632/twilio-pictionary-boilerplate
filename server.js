@@ -19,6 +19,9 @@ const twilioClient = require('twilio')(
   { accountSid: process.env.TWILIO_ACCOUNT_SID },
 );
 
+const pictionaryWords = ['Boat', 'Airplane', 'Car', 'Motorcycle', 'Train', 'Submarine', 'Spaceship', 'Bicycle'];
+
+
 const findOrCreateRoom = async (roomName) => {
   try {
     await twilioClient.video.rooms(roomName).fetch();
@@ -67,6 +70,23 @@ app.post('/join-room', async (req, res) => {
     token,
   });
 });
+
+
+app.get('/generate-pictionary-word', (req, res) => {
+  if (pictionaryWords.length > 0) {
+    const index = Math.floor(Math.random() * pictionaryWords.length);
+    const word = pictionaryWords[index];
+    pictionaryWords.splice(index, 1);
+    res.send({
+      word,
+    });
+  } else {
+    res.send({
+      word: 'There are no more pictionary words',
+    });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Express server running on port ${port}`);
